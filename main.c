@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <string.h>
+#include <time.h>
 
 typedef struct {
     int **a;
@@ -25,7 +26,7 @@ FILE *output_c_normal;
 FILE *output_c_row;
 FILE *output_c_element;
 
-void readFiles(int argc, const char *argv[], Data *data);
+void readFiles(int argc, char *names[], Data *data);
 void startMultiplication(Data *data);
 void *multiplyPerMatrix(void *args);
 void *multiplyPerRow(void *args);
@@ -35,10 +36,15 @@ void *elementMultiplication(void *args);
 void writeToFile(Data *data, int type);
 void cloneStruct(Data *source, Data *destination);
 void freeData(Data *data, int index);
+void insert_at_beginning(char *target[], char *source[]);
 
-int main(int argc, const char *argv[]) {
+int main(int argc,  char *argv[]) {
+    char *names[]={".txt",".txt","_per_matrix.txt","_per_row.txt","_per_element.txt"};
+    if(argc==4) {
+        insert_at_beginning(names, argv);
+    }
     Data *data = (Data *)malloc(3 * sizeof(Data));
-    readFiles(argc, argv, data);
+    readFiles(argc, names, data);
     startMultiplication(data);
     writeToFile(data, 0);
     writeToFile(data, 1);
@@ -50,7 +56,7 @@ int main(int argc, const char *argv[]) {
     return 0;
 }
 
-void readFiles(int argc, const char *argv[], Data *data){
+void readFiles(int argc,  char *names[], Data *data){
     // Open the files
     if(argc < 4){
         data_a = fopen("a.txt", "r");
@@ -60,15 +66,24 @@ void readFiles(int argc, const char *argv[], Data *data){
         output_c_element = fopen("c_per_element.txt", "w");
     }
     else{
-        data_a = fopen(strcat(argv[1],".txt"), "r");
-        data_b = fopen(strcat(argv[2],".txt"), "r");
-        output_c_normal = fopen(strcat(argv[3],"_per_matrix.txt"), "w");
-        output_c_row = fopen(strcat(argv[3],"_per_row.txt"), "w");
-        output_c_element = fopen(strcat(argv[3],"_per_element.txt"), "w");
+        data_a = fopen(names[0], "r");
+        data_b = fopen(names[1], "r");
+        output_c_normal = fopen(names[2], "w");
+        output_c_row = fopen(names[3], "w");
+        output_c_element = fopen(names[4], "w");
     }
 
     // Read the first matrix
-    fscanf(data_a, "row=%d col=%d", &data[0].row_size_a, &data[0].column_size_a);
+    int ret=fscanf(data_a, "row=%d col=%d", &data[0].row_size_a, &data[0].column_size_a);
+    if (ret!=2){
+        fprintf(output_c_element, "Error in reading file a.txt\n");
+        fprintf(output_c_row, "Error in reading file a.txt\n");
+        fprintf(output_c_normal, "Error in reading file a.txt\n");
+        fclose(output_c_element);
+        fclose(output_c_row);
+        fclose(output_c_normal);
+        exit(0);
+    }
     data[0].a = (int **)malloc(data[0].row_size_a * sizeof(int *));
     data[1].row_size_a = data[0].row_size_a;
     data[2].row_size_a = data[0].row_size_a;
@@ -79,7 +94,16 @@ void readFiles(int argc, const char *argv[], Data *data){
     }
     for(int i = 0; i < data[0].row_size_a; i++){
         for(int j = 0; j < data[0].column_size_a; j++){
-            fscanf(data_a, "%d", &data[0].a[i][j]);
+            int s=fscanf(data_a, "%d", &data[0].a[i][j]);
+            if (s!=1){
+                fprintf(output_c_element, "Error in reading file a.txt\n");
+                fprintf(output_c_row, "Error in reading file a.txt\n");
+                fprintf(output_c_normal, "Error in reading file a.txt\n");
+                fclose(output_c_element);
+                fclose(output_c_row);
+                fclose(output_c_normal);
+                exit(0);
+            }
         }
     }
     data[1].a = data[0].a;
@@ -87,7 +111,16 @@ void readFiles(int argc, const char *argv[], Data *data){
     fclose(data_a);
 
     // Read the second matrix
-    fscanf(data_b, "row=%d col=%d", &data[0].row_size_b, &data[0].column_size_b);
+    int ret2=fscanf(data_b, "row=%d col=%d", &data[0].row_size_b, &data[0].column_size_b);
+    if (ret2!=2){
+        fprintf(output_c_element, "Error in reading file b.txt\n");
+        fprintf(output_c_row, "Error in reading file b.txt\n");
+        fprintf(output_c_normal, "Error in reading file b.txt\n");
+        fclose(output_c_element);
+        fclose(output_c_row);
+        fclose(output_c_normal);
+        exit(0);
+    }
     data[0].b = (int **)malloc(data[0].row_size_b * sizeof(int *));
     data[1].row_size_b = data[0].row_size_b;
     data[2].row_size_b = data[0].row_size_b;
@@ -98,7 +131,16 @@ void readFiles(int argc, const char *argv[], Data *data){
     }
     for(int i = 0; i < data[0].row_size_b; i++){
         for(int j = 0; j < data[0].column_size_b; j++){
-            fscanf(data_b, "%d", &data[0].b[i][j]);
+            int s=fscanf(data_b, "%d", &data[0].b[i][j]);
+            if (s!=1){
+                fprintf(output_c_element, "Error in reading file b.txt\n");
+                fprintf(output_c_row, "Error in reading file b.txt\n");
+                fprintf(output_c_normal, "Error in reading file b.txt\n");
+                fclose(output_c_element);
+                fclose(output_c_row);
+                fclose(output_c_normal);
+                exit(0);
+            }
         }
     }
     data[1].b = data[0].b;
@@ -321,3 +363,38 @@ void freeData(Data *data, int index) {
         }
     }
 }
+void insert_at_beginning(char *target[], char *source[]) {
+    unsigned int length1= strlen(source[1])+strlen(target[0])+1;
+    unsigned int length2= strlen(source[2])+strlen(target[1])+1;
+    unsigned int length3= strlen(source[3])+strlen(target[2])+1;
+    unsigned int length4= strlen(source[3])+strlen(target[3])+1;
+    unsigned int length5= strlen(source[3])+strlen(target[4])+1;
+
+    char *temp1 = (char *)malloc(length1);
+    char *temp2 = (char *)malloc(length2);
+    char *temp3 = (char *)malloc(length3);
+    char *temp4 = (char *)malloc(length4);
+    char *temp5 = (char *)malloc(length5);
+
+    strcpy(temp1, source[1]);
+    strcat(temp1, target[0]);
+
+    strcpy(temp2, source[2]);
+    strcat(temp2, target[1]);
+
+    strcpy(temp3, source[3]);
+    strcat(temp3, target[2]);
+
+    strcpy(temp4, source[3]);
+    strcat(temp4, target[3]);
+
+    strcpy(temp5, source[3]);
+    strcat(temp5, target[4]);
+
+    target[0] = temp1;
+    target[1] = temp2;
+    target[2] = temp3;
+    target[3] = temp4;
+    target[4] = temp5;
+}
+

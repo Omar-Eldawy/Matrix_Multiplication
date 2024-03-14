@@ -1,12 +1,1 @@
-175 190 205 220 
-400 440 480 520 
-625 690 755 820 
-850 940 1030 1120 
-1075 1190 1305 1420 
-
-Time: 482681.000000 nano seconds
-Time: 482.681000 micro seconds
-Time: 0.482681 milli seconds
-Time: 0.000483 seconds
-
- Number of threads: 20
+Error in reading file a.txt

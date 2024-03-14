@@ -71,14 +71,24 @@ void readFiles(int argc,  char *names[], Data *data){
         output_c_normal = fopen(names[2], "w");
         output_c_row = fopen(names[3], "w");
         output_c_element = fopen(names[4], "w");
+
+        if (data_a == NULL) {
+            fprintf(output_c_element, "Error in opening files\n");
+            fprintf(output_c_row, "Error in opening files\n");
+            fprintf(output_c_normal, "Error in opening files\n");
+            fclose(output_c_element);
+            fclose(output_c_row);
+            fclose(output_c_normal);
+            exit(0);
+        }
     }
 
     // Read the first matrix
     int ret=fscanf(data_a, "row=%d col=%d", &data[0].row_size_a, &data[0].column_size_a);
     if (ret!=2){
-        fprintf(output_c_element, "Error in reading file a.txt\n");
-        fprintf(output_c_row, "Error in reading file a.txt\n");
-        fprintf(output_c_normal, "Error in reading file a.txt\n");
+        fprintf(output_c_element, "Error in reading first file\n");
+        fprintf(output_c_row, "Error in reading first file \n");
+        fprintf(output_c_normal, "Error in reading first file \n");
         fclose(output_c_element);
         fclose(output_c_row);
         fclose(output_c_normal);
@@ -96,9 +106,9 @@ void readFiles(int argc,  char *names[], Data *data){
         for(int j = 0; j < data[0].column_size_a; j++){
             int s=fscanf(data_a, "%d", &data[0].a[i][j]);
             if (s!=1){
-                fprintf(output_c_element, "Error in reading file a.txt\n");
-                fprintf(output_c_row, "Error in reading file a.txt\n");
-                fprintf(output_c_normal, "Error in reading file a.txt\n");
+                fprintf(output_c_element, "Error in reading first file\n");
+                fprintf(output_c_row, "Error in reading first file\n");
+                fprintf(output_c_normal, "Error in reading first file\n");
                 fclose(output_c_element);
                 fclose(output_c_row);
                 fclose(output_c_normal);
@@ -113,9 +123,9 @@ void readFiles(int argc,  char *names[], Data *data){
     // Read the second matrix
     int ret2=fscanf(data_b, "row=%d col=%d", &data[0].row_size_b, &data[0].column_size_b);
     if (ret2!=2){
-        fprintf(output_c_element, "Error in reading file b.txt\n");
-        fprintf(output_c_row, "Error in reading file b.txt\n");
-        fprintf(output_c_normal, "Error in reading file b.txt\n");
+        fprintf(output_c_element, "Error in reading second file\n");
+        fprintf(output_c_row, "Error in reading second file\n");
+        fprintf(output_c_normal, "Error in reading second file\n");
         fclose(output_c_element);
         fclose(output_c_row);
         fclose(output_c_normal);
@@ -133,9 +143,9 @@ void readFiles(int argc,  char *names[], Data *data){
         for(int j = 0; j < data[0].column_size_b; j++){
             int s=fscanf(data_b, "%d", &data[0].b[i][j]);
             if (s!=1){
-                fprintf(output_c_element, "Error in reading file b.txt\n");
-                fprintf(output_c_row, "Error in reading file b.txt\n");
-                fprintf(output_c_normal, "Error in reading file b.txt\n");
+                fprintf(output_c_element, "Error in reading second file\n");
+                fprintf(output_c_row, "Error in reading second file\n");
+                fprintf(output_c_normal, "Error in reading second file\n");
                 fclose(output_c_element);
                 fclose(output_c_row);
                 fclose(output_c_normal);

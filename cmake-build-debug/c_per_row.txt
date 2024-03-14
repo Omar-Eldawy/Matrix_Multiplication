@@ -1,0 +1,12 @@
+175 190 205 220 
+400 440 480 520 
+625 690 755 820 
+850 940 1030 1120 
+1075 1190 1305 1420 
+
+Time: 246224.000000 nano seconds
+Time: 246.224000 micro seconds
+Time: 0.246224 milli seconds
+Time: 0.000246 seconds
+
+ Number of threads: 5
